@@ -1013,7 +1013,7 @@ svg{display:block}
         .catch(function (err) {
           if (err && err.name === 'AbortError') return;
           if (settings.engine === 'live') {
-            settings.engine = 'preview'; save(); paintChrome(); paintSettings();
+            settings.engine = 'preview'; paintChrome(); paintSettings(); // session-only: not persisted, so a reload retries live
             toast(t('toast_live'));
             if (state.playing) playCurrent();
             return;
