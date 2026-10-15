@@ -1,0 +1,10 @@
+{
+  "name": "kahaani-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Kahaani AI — Stories That Speak. Static frontend + a Netlify Function that proxies Sarvam Bulbul v4-flash TTS.",
+  "scripts": {
+    "dev": "netlify dev"
+  }
+}
