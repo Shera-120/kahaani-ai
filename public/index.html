@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="hi" data-theme="night">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Kahaani AI — Stories That Speak</title>
+<meta name="description" content="Kahaani AI — a Hindi-first bedtime storytelling app. Pick a folk tale or write your own, and hear it told in a warm Indian storyteller's voice, with each line lighting up as it is read." />
+<meta name="theme-color" content="#13101e" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ================= tokens ================= */
+:root{
+  --font-display:"Baloo 2","Noto Serif Devanagari",system-ui,sans-serif;
+  --font-ui:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-story:"Noto Serif Devanagari",Georgia,"Times New Roman",serif;
+  --radius-sm:10px;--radius:16px;--radius-lg:22px;--radius-pill:999px;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:72px;
+  --shadow-1:0 1px 2px rgba(0,0,0,.28);--shadow-2:0 10px 30px rgba(0,0,0,.32);--shadow-3:0 26px 70px rgba(0,0,0,.46);
+  --maxw:1120px;--dur:240ms;--ease:cubic-bezier(.2,.7,.2,1);--player-h:96px;
+}
+[data-theme="night"]{
+  --bg:#13101e;
+  --bg-grad:radial-gradient(1100px 620px at 12% -12%,rgba(242,178,92,.12),transparent 62%),radial-gradient(900px 560px at 102% -6%,rgba(143,123,216,.16),transparent 58%),#13101e;
+  --surface:#1d1830;--surface-2:#262040;--surface-3:#322a52;
+  --border:rgba(255,255,255,.09);--border-strong:rgba(255,255,255,.18);
+  --text:#f4eee1;--text-2:#c2b8d5;--text-3:#8b82a4;
+  --accent:#f2b25c;--accent-ink:#2a1c07;--accent-2:#e07a5f;--accent-3:#8f7bd8;
+  --highlight-bg:rgba(242,178,92,.14);--highlight-line:#f2b25c;--focus:#f2b25c;--glass:rgba(29,24,48,.78);
+}
+[data-theme="day"]{
+  --bg:#fbf6ee;
+  --bg-grad:radial-gradient(1100px 620px at 12% -12%,rgba(242,178,92,.26),transparent 62%),radial-gradient(900px 560px at 102% -6%,rgba(143,123,216,.14),transparent 58%),#fbf6ee;
+  --surface:#ffffff;--surface-2:#f6efe2;--surface-3:#efe3cf;
+  --border:rgba(58,44,28,.13);--border-strong:rgba(58,44,28,.24);
+  --text:#2c2216;--text-2:#5f5340;--text-3:#8c8069;
+  --accent:#bf7318;--accent-ink:#fffaf0;--accent-2:#c0563b;--accent-3:#6b53b8;
+  --highlight-bg:rgba(191,115,24,.13);--highlight-line:#bf7318;--focus:#6b53b8;--glass:rgba(255,255,255,.82);
+}
+/* ================= base ================= */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;font-family:var(--font-ui);font-size:16px;line-height:1.55;color:var(--text);
+  background:var(--bg-grad);background-attachment:fixed;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;line-height:1.15;margin:0;letter-spacing:.2px}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer;color:inherit}
+svg{display:block}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:8px}
+::selection{background:var(--highlight-bg)}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.main{flex:1 0 auto}
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.icon{flex:none}
+/* ================= header ================= */
+.site-header{position:sticky;top:0;z-index:40;background:var(--glass);backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);border-bottom:1px solid var(--border)}
+.header__inner{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);min-height:68px}
+.brand{display:flex;align-items:center;gap:12px;padding:6px 8px;border-radius:var(--radius);text-align:left}
+.brand__mark{color:var(--accent);filter:drop-shadow(0 0 10px rgba(242,178,92,.35))}
+.brand__text{display:flex;flex-direction:column;line-height:1.05}
+.brand__name{font-family:var(--font-display);font-size:1.32rem;font-weight:700;letter-spacing:.3px}
+.brand__dot{color:var(--accent);margin-left:2px}
+.brand__tag{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)}
+.header__actions{display:flex;align-items:center;gap:10px}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:var(--radius-pill);
+  border:1px solid var(--border);background:var(--surface);color:var(--text-2);
+  transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.icon-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.icon-btn:active{transform:scale(.94)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:var(--radius-pill);font-size:.78rem;
+  font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--text-2);white-space:nowrap}
+.pill--soft{background:var(--surface-2)}
+.pill--lang{font-size:.72rem;letter-spacing:.04em}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text-3)}
+/* ================= hero ================= */
+.hero{padding:clamp(36px,7vw,72px) 0 clamp(20px,3vw,32px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.hero__title{font-size:clamp(2rem,6vw,3.4rem);max-width:18ch;letter-spacing:-.01em}
+.hero__title .hl{color:var(--accent)}
+.hero__sub{margin-top:18px;max-width:56ch;font-size:clamp(1rem,1.6vw,1.12rem);color:var(--text-2)}
+/* ================= library ================= */
+.lib__head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-5);flex-wrap:wrap}
+.section-title{font-size:1.4rem}
+.search{display:flex;align-items:center;gap:9px;padding:9px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);
+  background:var(--surface);color:var(--text-3);min-width:220px;transition:border-color var(--dur) var(--ease)}
+.search:focus-within{border-color:var(--border-strong)}
+.search input{border:none;background:none;outline:none;width:100%;color:var(--text)}
+.search input::placeholder{color:var(--text-3)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:var(--space-4);padding-bottom:var(--space-7)}
+.card{position:relative;display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:var(--radius-lg);
+  border:1px solid var(--border);background:linear-gradient(180deg,var(--surface),var(--surface-2));cursor:pointer;text-align:left;
+  overflow:hidden;transition:transform var(--dur) var(--ease),border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.card::after{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  opacity:0;transition:opacity var(--dur) var(--ease)}
+.card:hover{transform:translateY(-3px);border-color:var(--border-strong);box-shadow:var(--shadow-2)}
+.card:hover::after{opacity:1}
+.card__top{display:flex;align-items:center;justify-content:space-between}
+.card__motif{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:14px;
+  background:var(--surface-3);color:var(--accent);border:1px solid var(--border)}
+.card__title{font-size:1.28rem;margin-top:2px}
+.card__sub{font-size:.82rem;color:var(--text-3);letter-spacing:.02em}
+.card__moral{font-family:var(--font-story);font-size:.98rem;color:var(--text-2);margin-top:2px}
+.card__foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:14px}
+.card__play{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:var(--radius-pill);
+  background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:.88rem;transition:transform var(--dur) var(--ease),filter var(--dur) var(--ease)}
+.card__play:hover{filter:brightness(1.06)}
+.lib__empty{grid-column:1/-1;padding:40px 0;text-align:center;color:var(--text-3)}
+/* ================= empty language state ================= */
+.empty-lang{grid-column:1/-1;text-align:center;padding:clamp(28px,6vw,56px);border-radius:var(--radius-lg);
+  border:1px dashed var(--border-strong);background:var(--surface)}
+.empty-lang__title{font-size:1.4rem;margin-bottom:10px}
+.empty-lang__body{color:var(--text-2);max-width:46ch;margin:0 auto 20px}
+/* ================= create ================= */
+.create{padding-bottom:var(--space-8)}
+.create__card{display:grid;grid-template-columns:1fr;gap:var(--space-5);padding:clamp(24px,4vw,40px);border-radius:var(--radius-lg);
+  border:1px solid var(--border);background:radial-gradient(700px 300px at 100% 0%,rgba(143,123,216,.16),transparent 60%),linear-gradient(180deg,var(--surface),var(--surface-2))}
+@media(min-width:820px){.create__card{grid-template-columns:1.05fr .95fr;align-items:center}}
+.create__title{font-size:1.6rem;margin-bottom:10px}
+.create__desc{color:var(--text-2);max-width:46ch}
+.prompt{display:flex;flex-direction:column;gap:12px}
+.prompt__label{font-size:.84rem;color:var(--text-3);font-weight:500}
+.prompt__input{width:100%;min-height:96px;resize:vertical;padding:14px 16px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);color:var(--text);outline:none;transition:border-color var(--dur) var(--ease)}
+.prompt__input:focus{border-color:var(--border-strong)}
+.prompt__input::placeholder{color:var(--text-3)}
+.prompt__chips{display:flex;flex-wrap:wrap;gap:8px}
+.prompt__chip{padding:6px 12px;border-radius:var(--radius-pill);border:1px dashed var(--border-strong);background:transparent;
+  color:var(--text-2);font-size:.82rem;transition:border-color var(--dur) var(--ease),color var(--dur) var(--ease)}
+.prompt__chip:hover{border-color:var(--accent);color:var(--text)}
+.prompt__foot{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:var(--radius-pill);font-weight:600;font-size:.95rem;
+  transition:transform var(--dur) var(--ease),filter var(--dur) var(--ease),opacity var(--dur) var(--ease)}
+.btn--primary{background:var(--accent);color:var(--accent-ink)}
+.btn--primary:hover{filter:brightness(1.06)}
+.btn--primary:active{transform:scale(.97)}
+.prompt__note{font-size:.82rem;color:var(--text-3)}
+/* ================= reader ================= */
+.reader{padding:clamp(20px,4vw,40px) 0 calc(var(--player-h) + 40px)}
+.back{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:var(--radius-pill);
+  border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:.88rem;margin-bottom:var(--space-5);
+  transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+.back:hover{color:var(--text);border-color:var(--border-strong)}
+.story{max-width:46rem;margin-inline:auto}
+.story__head{text-align:center;margin-bottom:var(--space-6)}
+.story__motif{display:inline-flex;align-items:center;justify-content:center;width:62px;height:62px;border-radius:20px;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--accent);margin-bottom:18px;box-shadow:var(--shadow-1)}
+.story__title{font-size:clamp(1.8rem,4.5vw,2.6rem)}
+.story__sub{color:var(--text-3);font-size:.95rem;margin-top:6px;letter-spacing:.04em}
+.story__meta{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:16px}
+.story__moral{font-family:var(--font-story);font-style:italic;font-size:1.05rem;color:var(--accent);margin-top:18px}
+.story__body{padding:clamp(20px,4vw,36px);border-radius:var(--radius-lg);border:1px solid var(--border);
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));box-shadow:var(--shadow-1)}
+.story__text{font-family:var(--font-story);font-size:clamp(1.24rem,2.3vw,1.5rem);line-height:2.05;color:var(--text)}
+.story__text .s{border-radius:8px;padding:2px 6px;margin:0 -2px;cursor:pointer;
+  transition:background var(--dur) var(--ease),color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.story__text .s:hover{background:var(--surface-3)}
+.story__text .s.is-current{background:var(--highlight-bg);box-shadow:inset 3px 0 0 var(--highlight-line)}
+.story__text .s.is-done{color:var(--text-2)}
+/* ================= player ================= */
+.player-host{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:0 clamp(12px,3vw,28px) max(14px,env(safe-area-inset-bottom));pointer-events:none}
+.player{pointer-events:auto;max-width:var(--maxw);margin-inline:auto;border-radius:var(--radius-lg);border:1px solid var(--border-strong);
+  background:var(--glass);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+  box-shadow:var(--shadow-3);overflow:hidden;animation:rise var(--dur) var(--ease) both}
+@keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.player__progress{height:3px;background:var(--border)}
+.player__progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width 320ms var(--ease)}
+.player__inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--space-4);padding:14px clamp(14px,3vw,22px)}
+.player__meta{display:flex;flex-direction:column;gap:3px;min-width:0}
+.player__count{font-size:.88rem;font-weight:500}
+.player__mode{font-size:.74rem;color:var(--text-3)}
+.player__transport{display:flex;align-items:center;gap:8px}
+.tbtn{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:var(--radius-pill);
+  color:var(--text-2);transition:color var(--dur) var(--ease),background var(--dur) var(--ease)}
+.tbtn:hover{color:var(--text);background:var(--surface-2)}
+.tbtn--play{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);box-shadow:0 8px 20px rgba(242,178,92,.3);
+  transition:transform var(--dur) var(--ease),filter var(--dur) var(--ease)}
+.tbtn--play:hover{filter:brightness(1.06)}
+.tbtn--play:active{transform:scale(.95)}
+.player__controls{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+.field{display:flex;flex-direction:column;gap:3px;min-width:0}
+.field>span{font-size:.7rem;color:var(--text-3);letter-spacing:.04em}
+.field select{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:7px 9px;
+  font-size:.84rem;outline:none;max-width:180px}
+.field select:focus{border-color:var(--border-strong)}
+/* ================= toast ================= */
+.toast{position:fixed;left:50%;bottom:calc(var(--player-h) + 24px);transform:translate(-50%,16px);z-index:60;
+  max-width:min(92vw,460px);padding:12px 18px;border-radius:var(--radius-pill);border:1px solid var(--border-strong);
+  background:var(--surface-3);color:var(--text);font-size:.88rem;box-shadow:var(--shadow-2);opacity:0;pointer-events:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease);text-align:center}
+.toast.is-visible{opacity:1;transform:translate(-50%,0)}
+/* ================= footer ================= */
+.site-footer{flex:none;border-top:1px solid var(--border);padding:26px 0 34px;color:var(--text-3);font-size:.82rem}
+.footer__inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.footer__note{max-width:60ch}
+/* ================= settings sheet ================= */
+.backdrop{position:fixed;inset:0;background:rgba(8,6,14,.55);z-index:70;opacity:0;pointer-events:none;transition:opacity var(--dur) var(--ease)}
+.backdrop.is-open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);z-index:71;background:var(--surface);
+  border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(102%);
+  transition:transform 300ms var(--ease);box-shadow:var(--shadow-3)}
+.sheet.is-open{transform:none}
+.sheet__head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 22px 16px;border-bottom:1px solid var(--border)}
+.sheet__title{font-size:1.35rem}
+.sheet__sub{font-size:.84rem;color:var(--text-3);margin-top:4px}
+.sheet__body{padding:8px 22px 28px;overflow-y:auto;flex:1}
+.sec{padding:18px 0;border-bottom:1px solid var(--border)}
+.sec:last-child{border-bottom:none}
+.sec__title{display:flex;align-items:center;gap:8px;font-size:.76rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:14px}
+.row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.row:last-child{margin-bottom:0}
+.row>label,.row>.row__label{font-size:.84rem;color:var(--text-2);font-weight:500}
+.row select,.row input[type="text"]{width:100%;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:12px;padding:11px 12px;font-size:.92rem;outline:none;transition:border-color var(--dur) var(--ease)}
+.row select:focus,.row input[type="text"]:focus{border-color:var(--accent)}
+.row__hint{font-size:.76rem;color:var(--text-3)}
+.seg{display:flex;gap:8px;background:var(--surface-2);padding:5px;border-radius:var(--radius-pill);border:1px solid var(--border)}
+.seg button{flex:1;padding:9px 12px;border-radius:var(--radius-pill);font-size:.86rem;font-weight:500;color:var(--text-2);
+  transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.seg button.is-on{background:var(--accent);color:var(--accent-ink)}
+.langchips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.langchip{font-size:.76rem;padding:5px 10px;border-radius:var(--radius-pill);border:1px solid var(--border);
+  background:var(--surface-2);color:var(--text-2)}
+.langchip.is-active{border-color:var(--accent);color:var(--accent)}
+.langchip.is-muted{opacity:.6}
+/* ================= responsive ================= */
+@media(max-width:720px){
+  :root{--player-h:132px}
+  .player__inner{grid-template-columns:1fr auto;grid-template-areas:"meta transport" "controls controls";row-gap:12px}
+  .player__meta{grid-area:meta}
+  .player__transport{grid-area:transport}
+  .player__controls{grid-area:controls;justify-content:space-between}
+  .field select{max-width:40vw}
+  .brand__tag{display:none}
+  .pill--engine{display:none}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="app" class="app"></div>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Settings"></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript><div class="wrap" style="padding:48px 0"><h1>Kahaani AI</h1><p>Enable JavaScript to use this app.</p></div></noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     SVG icons (no emoji anywhere)
+     ============================================================ */
+  var PATHS = {
+    play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+    pause: '<rect x="6" y="4" width="4" height="16" rx="1.2"/><rect x="14" y="4" width="4" height="16" rx="1.2"/>',
+    'skip-back': '<polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/>',
+    'skip-forward': '<polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>',
+    'arrow-left': '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/>',
+    sparkles: '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>',
+    download: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+    volume: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.6a9 9 0 0 1 0 12.8"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    droplet: '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
+    paw: '<circle cx="7" cy="9" r="2"/><circle cx="12" cy="7" r="2"/><circle cx="17" cy="9" r="2"/><path d="M12 12c3.2 0 5.2 2.1 5.2 4.2A3 3 0 0 1 14.4 19c-.9 0-1.5-.5-2.4-.5s-1.5.5-2.4.5a3 3 0 0 1-2.8-2.8C6.8 14.1 8.8 12 12 12Z"/>',
+    flag: '<path d="M5 21V4"/><path d="M5 5h12l-2 4 2 4H5"/>',
+    grape: '<circle cx="12" cy="8" r="2.2"/><circle cx="8" cy="11" r="2.2"/><circle cx="16" cy="11" r="2.2"/><circle cx="10" cy="14.6" r="2.2"/><circle cx="14" cy="14.6" r="2.2"/><path d="M12 5.6V2.5"/>',
+    leaf: '<path d="M4 20C4 12 10 6 20 6c0 10-6 14-16 14Z"/><path d="M4 20c3-5 6-8 11-10"/>',
+    gem: '<path d="m6 3 12 0 4 6-10 12L2 9l4-6Z"/><path d="M2 9h20"/><path d="M9 3 7 9l5 12 5-12-2-6"/>',
+    wand: '<path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h0"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/>'
+  };
+  function icon(name, size, stroke) {
+    size = size || 20; stroke = stroke || 2;
+    return '<svg class="icon" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="' + stroke + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+      (PATHS[name] || '') + '</svg>';
+  }
+  function logomark(size) {
+    size = size || 30;
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 44 44" fill="none" aria-hidden="true" focusable="false">' +
+      '<defs><linearGradient id="kb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".18"/>' +
+      '<stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>' +
+      '<path d="M9 26.5h26c0 6.4-5.8 11-13 11s-13-4.6-13-11Z" fill="url(#kb)" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/>' +
+      '<path d="M22 25c2.9-2.9 2.9-6.8 0-9.7-2.9 2.9-2.9 6.8 0 9.7Z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  }
+
+  /* ============================================================
+     Languages supported by Bulbul v4-flash
+     ============================================================ */
+  var LANGS = [
+    { code: 'hi-IN', hi: 'हिन्दी',        en: 'Hindi',        native: 'हिन्दी' },
+    { code: 'en-IN', hi: 'अंग्रेज़ी',      en: 'English',      native: 'English' },
+    { code: 'bn-IN', hi: 'बंगाली',        en: 'Bengali',      native: 'বাংলা' },
+    { code: 'ta-IN', hi: 'तमिल',          en: 'Tamil',        native: 'தமிழ்' },
+    { code: 'te-IN', hi: 'तेलुगु',        en: 'Telugu',       native: 'తెలుగు' },
+    { code: 'mr-IN', hi: 'मराठी',         en: 'Marathi',      native: 'मराठी' },
+    { code: 'gu-IN', hi: 'गुजराती',       en: 'Gujarati',     native: 'ગુજરાતી' },
+    { code: 'kn-IN', hi: 'कन्नड़',        en: 'Kannada',      native: 'ಕನ್ನಡ' },
+    { code: 'pa-IN', hi: 'पंजाबी',        en: 'Punjabi',      native: 'ਪੰਜਾਬੀ' },
+    { code: 'ml-IN', hi: 'मलयालम',        en: 'Malayalam',    native: 'മലയാളം', noV4Voice: true },
+    { code: 'od-IN', hi: 'ओड़िया',        en: 'Odia',         native: 'ଓଡ଼ିଆ', noV4Voice: true }
+  ];
+  function langByCode(code) {
+    for (var i = 0; i < LANGS.length; i++) if (LANGS[i].code === code) return LANGS[i];
+    return LANGS[0];
+  }
+  function langName(code) {
+    var l = langByCode(code);
+    return settings.ui === 'en' ? l.en : l.hi;
+  }
+
+  /* Persona voice IDs. v4-flash uses voice_language_style; provisional picks,
+     confirmed against the live API when narration is connected. */
+  var VOICES = {
+    'hi-IN': [
+      { id: 'ishita_hi_devotional', name: 'इशिता', style: 'कहानी-सुनाने वाली' },
+      { id: 'aparna_hi_customer', name: 'अपर्णा', style: 'शांत और कोमल' },
+      { id: 'shubh_hi_customer', name: 'शुभ', style: 'गर्मजोशी भरी' },
+      { id: 'ritu_hi_customer', name: 'रितु', style: 'चुस्त और स्पष्ट' }
+    ],
+    'en-IN': [
+      { id: 'simran_en_customer', name: 'Simran', style: 'warm storyteller' },
+      { id: 'sunny_en_social', name: 'Sunny', style: 'friendly' },
+      { id: 'aparna_en_edtech', name: 'Aparna', style: 'calm and clear' },
+      { id: 'sanchita_en_insurance', name: 'Sanchita', style: 'gentle' }
+    ]
+  };
+
+  /* ============================================================
+     Stories
+     ============================================================ */
+  var STORIES = [
+    /* ---------------- Hindi ---------------- */
+    { id:'hi-crow', lang:'hi-IN', title:'प्यासा कौआ', sub:'The Thirsty Crow', motif:'droplet',
+      moral:'जहाँ चाह, वहाँ राह।', sentences:[
+      'गर्मी का मौसम था और चारों तरफ़ धूप फैली हुई थी।',
+      'एक कौआ उड़ते-उड़ते बहुत प्यासा हो गया।',
+      'वह पानी ढूँढ़ने के लिए इधर-उधर उड़ने लगा।',
+      'बहुत देर बाद उसे एक घड़ा दिखाई दिया।',
+      'कौआ ख़ुशी से घड़े के पास गया।',
+      'लेकिन घड़े में पानी बहुत नीचे था।',
+      'कौए की चोंच पानी तक नहीं पहुँच रही थी।',
+      'तब उसे एक उपाय सूझा।',
+      'वह छोटे-छोटे कंकड़ लाकर घड़े में डालने लगा।',
+      'धीरे-धीरे पानी ऊपर आ गया।',
+      'कौए ने पानी पिया और अपनी प्यास बुझाई।'] },
+    { id:'hi-lion', lang:'hi-IN', title:'शेर और चूहा', sub:'The Lion and the Mouse', motif:'paw',
+      moral:'छोटा हो या बड़ा, हर किसी की मदद काम आती है।', sentences:[
+      'एक जंगल में एक बड़ा शेर रहता था।',
+      'एक दिन वह दोपहर में आराम कर रहा था।',
+      'तभी एक छोटा चूहा उसके ऊपर से दौड़ गया।',
+      'शेर जाग गया और उसने चूहे को पकड़ लिया।',
+      'चूहे ने डरते हुए कहा, "मुझे छोड़ दो, मैं एक दिन तुम्हारी मदद करूँगा।"',
+      'शेर हँसा, पर उसने चूहे को छोड़ दिया।',
+      'कुछ दिन बाद शेर जाल में फँस गया।',
+      'उसने ज़ोर-ज़ोर से दहाड़ना शुरू किया।',
+      'चूहे ने दहाड़ सुनी और दौड़कर वहाँ पहुँचा।',
+      'उसने अपने नुकीले दाँतों से जाल काट डाला।',
+      'शेर आज़ाद हो गया और चूहे को धन्यवाद दिया।'] },
+    { id:'hi-tortoise', lang:'hi-IN', title:'कछुआ और खरगोश', sub:'The Tortoise and the Hare', motif:'flag',
+      moral:'धीरे चलो, पर रुको मत।', sentences:[
+      'एक जंगल में एक कछुआ और एक खरगोश रहते थे।',
+      'खरगोश हमेशा अपनी तेज़ दौड़ पर घमंड करता था।',
+      'एक दिन उसने कछुए को दौड़ की चुनौती दी।',
+      'कछुए ने धीरे से कहा, "मैं तैयार हूँ।"',
+      'दौड़ शुरू हुई और खरगोश तेज़ी से आगे निकल गया।',
+      'रास्ते में उसे बहुत नींद आने लगी।',
+      'उसने सोचा, "कछुआ तो बहुत पीछे है, मैं थोड़ा आराम कर लूँ।"',
+      'वह एक पेड़ के नीचे सो गया।',
+      'कछुआ बिना रुके धीरे-धीरे चलता रहा।',
+      'जब खरगोश जागा, तब तक कछुआ जीत चुका था।'] },
+    { id:'hi-fox', lang:'hi-IN', title:'लोमड़ी और अंगूर', sub:'The Fox and the Grapes', motif:'grape',
+      moral:'जो हमें न मिले, उसे बुरा कहना ठीक नहीं।', sentences:[
+      'एक लोमड़ी जंगल में घूम रही थी।',
+      'उसे एक अंगूर की बेल दिखाई दी।',
+      'बेल पर पके हुए अंगूर लटक रहे थे।',
+      'लोमड़ी के मुँह में पानी आ गया।',
+      'उसने ऊपर उछलकर अंगूर तोड़ने की कोशिश की।',
+      'लेकिन अंगूर बहुत ऊँचे थे।',
+      'वह बार-बार उछली, पर सफल नहीं हुई।',
+      'थककर उसने कहा, "ये अंगूर खट्टे ही होंगे।"',
+      'और वह वहाँ से चली गई।'] },
+    { id:'hi-ant', lang:'hi-IN', title:'चींटी और टिड्डा', sub:'The Ant and the Grasshopper', motif:'leaf',
+      moral:'समय पर की गई मेहनत कभी बेकार नहीं जाती।', sentences:[
+      'गर्मियों के दिनों में एक चींटी खाना जमा कर रही थी।',
+      'वह दिन-रात मेहनत करती और दाने ढोती।',
+      'पास ही एक टिड्डा आराम से गा रहा था।',
+      'टिड्डे ने कहा, "इतनी मेहनत क्यों करती हो? आओ, गाओ।"',
+      'चींटी ने कहा, "सर्दियों के लिए खाना ज़रूरी है।"',
+      'टिड्डा हँसकर उड़ गया।',
+      'सर्दी आई और खाना मिलना बंद हो गया।',
+      'टिड्डा भूखा रह गया।',
+      'उसने चींटी से मदद माँगी।',
+      'चींटी ने उसे खाना दिया और कहा, "आगे से समय पर काम करना।"'] },
+    { id:'hi-wood', lang:'hi-IN', title:'ईमानदार लकड़हारा', sub:'The Honest Woodcutter', motif:'gem',
+      moral:'ईमानदारी सबसे बड़ा धन है।', sentences:[
+      'एक गरीब लकड़हारा नदी किनारे लकड़ी काट रहा था।',
+      'अचानक उसकी कुल्हाड़ी नदी में गिर गई।',
+      'वह रोने लगा, क्योंकि वही उसकी कमाई थी।',
+      'तभी एक देवता वहाँ प्रकट हुए।',
+      'उन्होंने पानी से सोने की कुल्हाड़ी निकाली।',
+      'लकड़हारे ने कहा, "यह मेरी नहीं है।"',
+      'फिर चाँदी की कुल्हाड़ी दिखाई गई।',
+      'उसने फिर कहा, "यह भी मेरी नहीं है।"',
+      'अंत में उसकी लोहे की कुल्हाड़ी निकाली गई।',
+      'लकड़हारे ने ख़ुशी से कहा, "हाँ, यही मेरी है।"',
+      'देवता उसकी ईमानदारी से ख़ुश हुए और उसे तीनों कुल्हाड़ियाँ दे दीं।'] },
+    /* ---------------- English ---------------- */
+    { id:'en-crow', lang:'en-IN', title:'The Thirsty Crow', sub:'प्यासा कौआ', motif:'droplet',
+      moral:'Where there is a will, there is a way.', sentences:[
+      'It was a hot summer day and the sun blazed all around.',
+      'A crow, flying for a long time, grew very thirsty.',
+      'He began to fly here and there, looking for water.',
+      'After a long while, he spotted a pot.',
+      'The crow flew down to the pot, delighted.',
+      'But the water in the pot was very low.',
+      'His beak could not reach the water.',
+      'Then he thought of a plan.',
+      'He began dropping small pebbles into the pot.',
+      'Slowly, the water rose to the top.',
+      'The crow drank the water and quenched his thirst.'] },
+    { id:'en-lion', lang:'en-IN', title:'The Lion and the Mouse', sub:'शेर और चूहा', motif:'paw',
+      moral:'Small or great, everyone\u2019s help matters.', sentences:[
+      'In a forest there lived a great lion.',
+      'One afternoon he was resting.',
+      'Just then a little mouse ran over him.',
+      'The lion woke and caught the mouse.',
+      'Trembling, the mouse said, "Let me go, and one day I will help you."',
+      'The lion laughed, but he let the mouse go.',
+      'Some days later, the lion was caught in a net.',
+      'He began to roar with all his might.',
+      'The mouse heard the roar and ran to him.',
+      'With his sharp teeth, he cut the net apart.',
+      'The lion was free, and he thanked the mouse.'] },
+    { id:'en-tortoise', lang:'en-IN', title:'The Tortoise and the Hare', sub:'कछुआ और खरगोश', motif:'flag',
+      moral:'Go slowly, but never stop.', sentences:[
+      'In a forest lived a tortoise and a hare.',
+      'The hare always bragged about how fast he could run.',
+      'One day he challenged the tortoise to a race.',
+      'The tortoise said quietly, "I am ready."',
+      'The race began and the hare shot far ahead.',
+      'Along the way, he grew very sleepy.',
+      'He thought, "The tortoise is far behind; I will rest a while."',
+      'He fell asleep under a tree.',
+      'The tortoise kept walking, slowly and without stopping.',
+      'By the time the hare woke, the tortoise had won.'] },
+    { id:'en-fox', lang:'en-IN', title:'The Fox and the Grapes', sub:'लोमड़ी और अंगूर', motif:'grape',
+      moral:'It is wrong to call something bad just because we cannot have it.', sentences:[
+      'A fox was wandering through the forest.',
+      'She spotted a vine of grapes.',
+      'Ripe grapes hung from the vine.',
+      'The fox\u2019s mouth began to water.',
+      'She jumped up again and again, trying to reach the grapes.',
+      'But the grapes were too high.',
+      'She leapt many times, but could not succeed.',
+      'Tired, she said, "Those grapes must be sour anyway."',
+      'And she walked away.'] },
+    { id:'en-ant', lang:'en-IN', title:'The Ant and the Grasshopper', sub:'चींटी और टिड्डा', motif:'leaf',
+      moral:'Work done on time is never wasted.', sentences:[
+      'Through the summer, an ant was gathering food.',
+      'She worked day and night, carrying grain.',
+      'Nearby, a grasshopper sang away at ease.',
+      'The grasshopper said, "Why work so hard? Come and sing."',
+      'The ant said, "We will need food for the winter."',
+      'The grasshopper laughed and flew off.',
+      'Winter came, and food became hard to find.',
+      'The grasshopper was left hungry.',
+      'He asked the ant for help.',
+      'The ant gave him food and said, "Next time, work on time."'] },
+    { id:'en-wood', lang:'en-IN', title:'The Honest Woodcutter', sub:'ईमानदार लकड़हारा', motif:'gem',
+      moral:'Honesty is the greatest wealth.', sentences:[
+      'A poor woodcutter was chopping wood by the river.',
+      'Suddenly his axe slipped into the river.',
+      'He began to weep, for it was all he had.',
+      'Just then a god appeared before him.',
+      'He lifted a golden axe out of the water.',
+      'The woodcutter said, "That is not mine."',
+      'Then a silver axe was shown to him.',
+      'He said again, "That is not mine either."',
+      'At last, his iron axe was brought out.',
+      'The woodcutter said joyfully, "Yes, this one is mine."',
+      'Pleased by his honesty, the god gave him all three axes.'] }
+  ];
+
+  var IDEAS = {
+    hi: ['एक हिम्मती चूहा और जादुई बाँसुरी', 'चाँद पर उड़ने वाली गिलहरी', 'ईमानदार दर्जी और सोने का सिक्का', 'जंगल में खोई हुई छोटी बिल्ली'],
+    en: ['A brave mouse and a magic flute', 'The squirrel who flew to the moon', 'An honest tailor and a gold coin', 'A little lost kitten in the forest']
+  };
+
+  /* ============================================================
+     i18n
+     ============================================================ */
+  var I18N = {
+    hi: {
+      brand_tag: 'कहानियाँ जो बोलती हैं',
+      settings: 'सेटिंग्स',
+      hero_eyebrow: 'आज की कहानी',
+      hero_t1: 'सुनिए, ', hero_hl: 'कहानियाँ', hero_t2: ' जो बोलती हैं।',
+      hero_sub: 'एक कहानी चुनिए — या अपनी बनाइए — और सुनिए भारतीय आवाज़ में, जहाँ हर वाक्य साथ-साथ चमकता है।',
+      lib_title: 'कहानी-संग्रह',
+      search_ph: 'कहानी खोजें…',
+      empty_search: 'कोई कहानी नहीं मिली। कोई और शब्द आज़माइए।',
+      listen: 'सुनिए',
+      create_eyebrow: 'अपनी कहानी',
+      create_title: 'एक कहानी बनाइए',
+      create_desc: 'किसी पात्र, जगह या सीख के बारे में लिखिए — बाकी कहानी हम लिखेंगे और सुनाएँगे।',
+      prompt_label: 'आपका विचार',
+      prompt_ph: 'जैसे: एक छोटी गिलहरी जो चाँद तक उड़ना चाहती है…',
+      create_btn: 'कहानी बनाइए',
+      prompt_note: 'AI कहानी-निर्माण अगले चरण में जुड़ेगा।',
+      back: 'कहानी-संग्रह',
+      sentences: '{n} वाक्य',
+      player_count: 'वाक्य {i} / {n}',
+      pace: 'गति', voice: 'आवाज़',
+      download: 'ऑडियो डाउनलोड करें',
+      play: 'चलाएँ', pause: 'रोकें', prev: 'पिछला वाक्य', next: 'अगला वाक्य',
+      pace_slow: 'धीमी', pace_normal: 'सामान्य', pace_fast: 'तेज़',
+      footer_l: 'Kahaani AI — कहानियाँ जो बोलती हैं।',
+      footer_r: 'आवाज़ अभी ब्राउज़र पूर्वावलोकन में है · Bulbul v4-flash जुड़ते ही लाइव हो जाएगी।',
+      toast_idea: 'पहले कहानी का विचार लिखिए।',
+      toast_gen: 'AI कहानी-निर्माण अगले चरण में जुड़ेगा।',
+      toast_done: 'कहानी पूरी हुई।',
+      toast_err: 'आवाज़ नहीं चल सकी। कृपया फिर कोशिश कीजिए।',
+      toast_live: 'लाइव आवाज़ अभी जुड़ी नहीं है — ब्राउज़र आवाज़ पर चला रहे हैं।',
+      settings_title: 'सेटिंग्स',
+      settings_sub: 'भाषा, आवाज़ और दिखावट चुनिए।',
+      sec_language: 'भाषा', sec_voice: 'आवाज़', sec_appearance: 'दिखावट', sec_narration: 'नैरेशन',
+      lbl_ui: 'इंटरफ़ेस भाषा',
+      lbl_story: 'कहानी व आवाज़ की भाषा',
+      lbl_theme: 'थीम',
+      theme_night: 'रात (दीपक)', theme_day: 'दिन (काग़ज़)',
+      lbl_engine: 'नैरेशन इंजन',
+      engine_preview: 'ब्राउज़र पूर्वावलोकन', engine_live: 'Bulbul v4-flash (लाइव)',
+      lbl_endpoint: 'लाइव बैकएंड पता',
+      endpoint_hint: 'API कुंजी सर्वर पर रहती है — क्लाइंट में कभी नहीं।',
+      supported: 'Bulbul v4-flash 11 भाषाएँ समर्थित करता है',
+      ml_od_note: 'v4 Flash में मलयालम व ओड़िया की आवाज़ें अभी नहीं हैं (v3 में उपलब्ध)।',
+      stories_count: '{n} कहानियाँ',
+      coming_soon: 'जल्द आ रही है',
+      empty_lang_t: '{lang} में कहानियाँ अभी नहीं हैं',
+      empty_lang_b: 'अभी कहानियाँ हिन्दी और English में हैं। बाक़ी भाषाएँ जल्द जुड़ेंगी।',
+      empty_lang_cta: 'भाषा बदलें',
+      voice_na: 'इस भाषा के लिए आवाज़ें जल्द जुड़ेंगी।',
+      close: 'बंद करें'
+    },
+    en: {
+      brand_tag: 'Stories That Speak',
+      settings: 'Settings',
+      hero_eyebrow: "Tonight's story",
+      hero_t1: 'Listen to ', hero_hl: 'stories', hero_t2: ' that speak.',
+      hero_sub: 'Pick a tale — or create your own — and hear it in an Indian voice, with every line lighting up as it is read.',
+      lib_title: 'Story library',
+      search_ph: 'Search stories…',
+      empty_search: 'No stories found. Try another word.',
+      listen: 'Listen',
+      create_eyebrow: 'Your story',
+      create_title: 'Create a story',
+      create_desc: 'Describe a character, a place, or a lesson — we will write the rest and read it aloud.',
+      prompt_label: 'Your idea',
+      prompt_ph: 'e.g. a little squirrel who wants to fly to the moon…',
+      create_btn: 'Create story',
+      prompt_note: 'AI story generation arrives in a later step.',
+      back: 'Library',
+      sentences: '{n} sentences',
+      player_count: 'Line {i} / {n}',
+      pace: 'Pace', voice: 'Voice',
+      download: 'Download audio',
+      play: 'Play', pause: 'Pause', prev: 'Previous line', next: 'Next line',
+      pace_slow: 'Slow', pace_normal: 'Normal', pace_fast: 'Fast',
+      footer_l: 'Kahaani AI — stories that speak.',
+      footer_r: 'Narration is in browser preview · it goes live once Bulbul v4-flash is connected.',
+      toast_idea: 'Write your story idea first.',
+      toast_gen: 'AI story generation arrives in a later step.',
+      toast_done: 'The story is finished.',
+      toast_err: 'Could not play audio. Please try again.',
+      toast_live: 'Live narration is not connected yet — using browser preview.',
+      settings_title: 'Settings',
+      settings_sub: 'Choose language, voice and appearance.',
+      sec_language: 'Language', sec_voice: 'Voice', sec_appearance: 'Appearance', sec_narration: 'Narration',
+      lbl_ui: 'Interface language',
+      lbl_story: 'Story & voice language',
+      lbl_theme: 'Theme',
+      theme_night: 'Night (lamp-lit)', theme_day: 'Day (paper)',
+      lbl_engine: 'Narration engine',
+      engine_preview: 'Browser preview', engine_live: 'Bulbul v4-flash (live)',
+      lbl_endpoint: 'Live backend URL',
+      endpoint_hint: 'The API key stays on the server — never in the client.',
+      supported: 'Bulbul v4-flash supports 11 languages',
+      ml_od_note: 'v4 Flash has no Malayalam or Odia voices yet (available on v3).',
+      stories_count: '{n} stories',
+      coming_soon: 'coming soon',
+      empty_lang_t: 'No stories in {lang} yet',
+      empty_lang_b: 'Stories are available in Hindi and English today. More languages are coming soon.',
+      empty_lang_cta: 'Change language',
+      voice_na: 'Voices for this language are coming soon.',
+      close: 'Close'
+    }
+  };
+
+  /* ============================================================
+     State + persistence
+     ============================================================ */
+  // When the page is served over http(s) there is a backend next to it, so
+  // default to live narration. Opened straight from disk (file://) there is
+  // no backend, so default to the browser preview.
+  var SERVED = (typeof location !== 'undefined') && /^https?:$/.test(location.protocol);
+  var DEFAULTS = {
+    ui: 'hi', storyLang: 'hi-IN', pace: 1, theme: 'night',
+    engine: SERVED ? 'live' : 'preview', endpoint: '/api', voice: {}
+  };
+  var settings = load();
+  var view = { name: 'library', story: null };
+  var search = '';
+
+  function load() {
+    var s = {};
+    for (var k in DEFAULTS) s[k] = DEFAULTS[k];
+    try {
+      var raw = localStorage.getItem('kahaani.settings');
+      if (raw) {
+        var saved = JSON.parse(raw);
+        for (var j in saved) s[j] = saved[j];
+      }
+    } catch (e) { /* ignore */ }
+    return s;
+  }
+  function save() {
+    try { localStorage.setItem('kahaani.settings', JSON.stringify(settings)); } catch (e) { /* ignore */ }
+  }
+
+  /* ============================================================
+     Helpers
+     ============================================================ */
+  function t(key, params) {
+    var dict = I18N[settings.ui] || I18N.hi;
+    var s = dict[key] != null ? dict[key] : (I18N.hi[key] != null ? I18N.hi[key] : key);
+    if (params) s = s.replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? params[k] : m; });
+    return s;
+  }
+  function esc(v) {
+    return String(v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function estimateSeconds(sentences, pace) {
+    var chars = sentences.join(' ').length;
+    return Math.max(1, Math.round(chars / (13 * (pace || 1))));
+  }
+  function dur(sec) {
+    if (settings.ui === 'en') {
+      if (sec < 60) return sec + 's';
+      var m1 = Math.floor(sec / 60), s1 = sec % 60;
+      return s1 ? m1 + 'm ' + s1 + 's' : m1 + 'm';
+    }
+    if (sec < 60) return sec + ' सेकंड';
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return s ? m + ' मिनट ' + s + ' सेकंड' : m + ' मिनट';
+  }
+  function storiesFor(code) {
+    return STORIES.filter(function (s) { return s.lang === code; });
+  }
+  function voicesFor(code) {
+    return VOICES[code] || [];
+  }
+  function selectedVoice(code) {
+    var list = voicesFor(code);
+    if (!list.length) return null;
+    var want = settings.voice && settings.voice[code];
+    for (var i = 0; i < list.length; i++) if (list[i].id === want) return list[i].id;
+    return list[0].id;
+  }
+
+  /* ============================================================
+     Toast
+     ============================================================ */
+  var toastTimer = null;
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('is-visible');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('is-visible'); }, 4200);
+  }
+
+  /* ============================================================
+     Narration (preview + live behind one interface)
+     ============================================================ */
+  var narToken = 0, narAudio = null, narUtterance = null;
+
+  function narrateStop() {
+    narToken++;
+    if (narAudio) { try { narAudio.pause(); } catch (e) {} narAudio.src = ''; narAudio = null; }
+    if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+    narUtterance = null;
+  }
+  function pickVoice(langCode) {
+    if (typeof speechSynthesis === 'undefined') return null;
+    var voices = speechSynthesis.getVoices() || [];
+    var base = String(langCode).split('-')[0].toLowerCase();
+    for (var i = 0; i < voices.length; i++) if (voices[i].lang === langCode) return voices[i];
+    for (var j = 0; j < voices.length; j++) if ((voices[j].lang || '').toLowerCase().indexOf(base) === 0) return voices[j];
+    return null;
+  }
+  function narrate(text, opts) {
+    opts = opts || {};
+    var pace = opts.pace || 1, speaker = opts.speaker, languageCode = opts.languageCode || 'hi-IN';
+    narrateStop();
+    var token = narToken;
+    var isCurrent = function () { return token === narToken; };
+    if (settings.engine === 'live') return narrateLive(text, pace, speaker, languageCode, isCurrent);
+    return narratePreview(text, pace, languageCode, isCurrent);
+  }
+  function narrateLive(text, pace, speaker, languageCode, isCurrent) {
+    var url = (settings.endpoint || '/api').replace(/\/$/, '') + '/tts';
+    return fetch(url, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, language_code: languageCode, speaker: speaker, pace: pace })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('tts ' + res.status);
+      return res.blob();
+    }).then(function (blob) {
+      if (!isCurrent()) throw new DOMException('aborted', 'AbortError');
+      return new Promise(function (resolve, reject) {
+        var audio = new Audio(URL.createObjectURL(blob));
+        narAudio = audio;
+        audio.playbackRate = Math.min(2, Math.max(0.5, pace));
+        audio.onended = function () { narAudio = null; resolve(); };
+        audio.onerror = function () { narAudio = null; reject(new Error('audio-failed')); };
+        audio.play().catch(reject);
+      });
+    });
+  }
+  function narratePreview(text, pace, languageCode, isCurrent) {
+    if (typeof speechSynthesis === 'undefined') return Promise.reject(new Error('no-speech'));
+    return new Promise(function (resolve, reject) {
+      var u = new SpeechSynthesisUtterance(text);
+      var v = pickVoice(languageCode);
+      if (v) u.voice = v;
+      u.lang = languageCode;
+      u.rate = Math.min(2, Math.max(0.5, pace));
+      u.pitch = 1;
+      narUtterance = u;
+      var settled = false;
+      var settle = function (fn, arg) { if (!settled) { settled = true; fn(arg); } };
+      u.onend = function () { settle(resolve); };
+      u.onerror = function (e) { settle(reject, new Error('speech:' + ((e && e.error) || 'x'))); };
+      if (!isCurrent()) { settle(reject, new DOMException('aborted', 'AbortError')); return; }
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    });
+  }
+
+  /* ============================================================
+     Shell
+     ============================================================ */
+  function applyTheme() {
+    document.documentElement.dataset.theme = settings.theme;
+    document.documentElement.lang = settings.ui === 'en' ? 'en' : 'hi';
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', settings.theme === 'night' ? '#13101e' : '#fbf6ee');
+  }
+
+  function shell() {
+    var app = document.getElementById('app');
+    app.innerHTML =
+      '<header class="site-header"><div class="wrap header__inner">' +
+        '<button class="brand" data-act="home" type="button" aria-label="Kahaani AI">' +
+          '<span class="brand__mark">' + logomark(30) + '</span>' +
+          '<span class="brand__text"><span class="brand__name">Kahaani<span class="brand__dot">AI</span></span>' +
+          '<span class="brand__tag" id="brand-tag"></span></span>' +
+        '</button>' +
+        '<div class="header__actions">' +
+          '<span class="pill pill--soft pill--engine" id="engine-pill">' + icon('volume', 15) + ' <span></span></span>' +
+          '<button class="icon-btn" data-act="theme" type="button" aria-label="theme"></button>' +
+          '<button class="icon-btn" data-act="settings" type="button" id="settings-btn" aria-label="settings">' + icon('settings', 18) + '</button>' +
+        '</div>' +
+      '</div></header>' +
+      '<main class="main" id="main"></main>' +
+      '<footer class="site-footer"><div class="wrap footer__inner">' +
+        '<span id="foot-l"></span><span class="footer__note" id="foot-r"></span>' +
+      '</div></footer>';
+
+    app.querySelector('[data-act="home"]').addEventListener('click', function () { go({ name: 'library', story: null }); });
+    app.querySelector('[data-act="theme"]').addEventListener('click', function () {
+      settings.theme = settings.theme === 'night' ? 'day' : 'night'; save(); applyTheme(); paintChrome(); paintSettings();
+    });
+    app.querySelector('[data-act="settings"]').addEventListener('click', openSheet);
+  }
+
+  function paintChrome() {
+    var tag = document.getElementById('brand-tag');
+    if (tag) tag.textContent = t('brand_tag');
+    var fl = document.getElementById('foot-l'); if (fl) fl.textContent = t('footer_l');
+    var fr = document.getElementById('foot-r'); if (fr) fr.textContent = t('footer_r');
+    var sb = document.getElementById('settings-btn'); if (sb) sb.setAttribute('aria-label', t('settings'));
+    var th = document.querySelector('[data-act="theme"]');
+    if (th) { th.innerHTML = icon(settings.theme === 'night' ? 'sun' : 'moon', 18); th.setAttribute('aria-label', t('lbl_theme')); }
+    var pill = document.getElementById('engine-pill');
+    if (pill) {
+      pill.querySelector('span').textContent = settings.engine === 'live' ? t('engine_live') : t('engine_preview');
+    }
+  }
+
+  /* ============================================================
+     Views
+     ============================================================ */
+  function go(next) {
+    narrateStop();
+    Object.assign(view, next);
+    render();
+  }
+
+  function render() {
+    paintChrome();
+    var main = document.getElementById('main');
+    if (view.name === 'reader' && view.story) renderReader(main);
+    else renderLibrary(main);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  function renderLibrary(main) {
+    var list = storiesFor(settings.storyLang);
+    main.innerHTML =
+      '<section class="hero wrap">' +
+        '<p class="eyebrow">' + icon('book', 15) + ' ' + t('hero_eyebrow') + '</p>' +
+        '<h1 class="hero__title">' + t('hero_t1') + '<span class="hl">' + t('hero_hl') + '</span>' + t('hero_t2') + '</h1>' +
+        '<p class="hero__sub">' + t('hero_sub') + '</p>' +
+      '</section>' +
+      '<section class="wrap">' +
+        '<div class="lib__head">' +
+          '<h2 class="section-title">' + t('lib_title') + '</h2>' +
+          '<div class="search">' + icon('search', 16) +
+            '<input id="lib-search" type="search" placeholder="' + esc(t('search_ph')) + '" aria-label="' + esc(t('search_ph')) + '" />' +
+          '</div>' +
+        '</div>' +
+        '<div class="grid" id="lib-grid"></div>' +
+      '</section>' +
+      '<section class="wrap create" id="create-host"></section>';
+
+    var grid = document.getElementById('lib-grid');
+    var input = document.getElementById('lib-search');
+    input.value = search;
+
+    function paintGrid() {
+      if (!list.length) {
+        grid.innerHTML =
+          '<div class="empty-lang">' +
+            '<h3 class="empty-lang__title">' + esc(t('empty_lang_t', { lang: langName(settings.storyLang) })) + '</h3>' +
+            '<p class="empty-lang__body">' + esc(t('empty_lang_b')) + '</p>' +
+            '<button class="btn btn--primary" id="empty-cta" type="button">' + icon('settings', 18) + ' ' + t('empty_lang_cta') + '</button>' +
+          '</div>';
+        var cta = document.getElementById('empty-cta');
+        if (cta) cta.addEventListener('click', openSheet);
+        return;
+      }
+      var q = search.trim().toLowerCase();
+      var filtered = !q ? list : list.filter(function (s) {
+        return s.title.toLowerCase().indexOf(q) >= 0 || s.sub.toLowerCase().indexOf(q) >= 0 || s.moral.toLowerCase().indexOf(q) >= 0;
+      });
+      if (!filtered.length) { grid.innerHTML = '<p class="lib__empty">' + t('empty_search') + '</p>'; return; }
+
+      grid.innerHTML = filtered.map(function (s) {
+        return '<article class="card" data-id="' + s.id + '" role="button" tabindex="0" aria-label="' + esc(s.title) + '">' +
+          '<div class="card__top"><span class="card__motif">' + icon(s.motif, 24) + '</span>' +
+          '<span class="pill pill--lang">' + esc(langName(s.lang)) + '</span></div>' +
+          '<h3 class="card__title">' + esc(s.title) + '</h3>' +
+          '<p class="card__sub">' + esc(s.sub) + '</p>' +
+          '<p class="card__moral">\u201C' + esc(s.moral) + '\u201D</p>' +
+          '<div class="card__foot"><span class="chip">' + icon('clock', 15) + ' ' + dur(estimateSeconds(s.sentences, settings.pace)) + '</span>' +
+          '<span class="card__play">' + icon('play', 16) + ' ' + t('listen') + '</span></div></article>';
+      }).join('');
+
+      Array.prototype.forEach.call(grid.querySelectorAll('.card'), function (el) {
+        var open = function () { go({ name: 'reader', story: STORIES.filter(function (s) { return s.id === el.dataset.id; })[0] }); };
+        el.addEventListener('click', open);
+        el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+      });
+    }
+
+    paintGrid();
+    input.addEventListener('input', function (e) { search = e.target.value; paintGrid(); });
+
+    var createHost = document.getElementById('create-host');
+    var ideas = IDEAS[settings.ui] || IDEAS.hi;
+    createHost.innerHTML =
+      '<div class="create__card"><div class="create__intro">' +
+        '<p class="eyebrow">' + icon('sparkles', 15) + ' ' + t('create_eyebrow') + '</p>' +
+        '<h2 class="create__title">' + t('create_title') + '</h2>' +
+        '<p class="create__desc">' + t('create_desc') + '</p>' +
+      '</div><div class="prompt">' +
+        '<label class="prompt__label" for="prompt-input">' + t('prompt_label') + '</label>' +
+        '<textarea id="prompt-input" class="prompt__input" placeholder="' + esc(t('prompt_ph')) + '"></textarea>' +
+        '<div class="prompt__chips">' + ideas.map(function (x, i) {
+          return '<button class="prompt__chip" data-idea="' + i + '" type="button">' + esc(x) + '</button>';
+        }).join('') + '</div>' +
+        '<div class="prompt__foot"><button class="btn btn--primary" id="prompt-create" type="button">' + icon('wand', 18) + ' ' + t('create_btn') + '</button>' +
+        '<span class="prompt__note">' + t('prompt_note') + '</span></div>' +
+      '</div></div>';
+
+    var pin = document.getElementById('prompt-input');
+    Array.prototype.forEach.call(createHost.querySelectorAll('[data-idea]'), function (b) {
+      b.addEventListener('click', function () { pin.value = ideas[Number(b.dataset.idea)] || ''; pin.focus(); });
+    });
+    document.getElementById('prompt-create').addEventListener('click', function () {
+      toast(pin.value.trim() ? t('toast_gen') : t('toast_idea'));
+    });
+  }
+
+  function renderReader(main) {
+    var story = view.story;
+    var state = { index: 0, playing: false };
+    var voiceId = selectedVoice(story.lang);
+
+    main.innerHTML =
+      '<div class="reader wrap">' +
+        '<button class="back" data-act="back" type="button">' + icon('arrow-left', 18) + ' ' + t('back') + '</button>' +
+        '<article class="story"><header class="story__head">' +
+          '<span class="story__motif">' + icon(story.motif, 30) + '</span>' +
+          '<h1 class="story__title">' + esc(story.title) + '</h1>' +
+          '<p class="story__sub">' + esc(story.sub) + '</p>' +
+          '<div class="story__meta">' +
+            '<span class="chip">' + icon('clock', 15) + ' ' + dur(estimateSeconds(story.sentences, settings.pace)) + '</span>' +
+            '<span class="chip">' + icon('book', 15) + ' ' + t('sentences', { n: story.sentences.length }) + '</span>' +
+            '<span class="chip">' + icon('volume', 15) + ' ' + esc(langName(story.lang)) + '</span>' +
+          '</div>' +
+          '<p class="story__moral">\u201C' + esc(story.moral) + '\u201D</p>' +
+        '</header><div class="story__body"><p class="story__text" id="story-text">' +
+          story.sentences.map(function (s, i) {
+            return '<span class="s" data-i="' + i + '" role="button" tabindex="0" aria-label="' + esc(s) + '">' + esc(s) + '</span>';
+          }).join(' ') +
+        '</p></div></article>' +
+      '</div><div class="player-host" id="player-host"></div>';
+
+    var spanEls = Array.prototype.slice.call(document.querySelectorAll('.s'));
+    var host = document.getElementById('player-host');
+    var list = voicesFor(story.lang);
+    var voiceOpts = list.length
+      ? list.map(function (v) { return '<option value="' + v.id + '">' + esc(v.name) + ' \u2014 ' + esc(v.style) + '</option>'; }).join('')
+      : '<option value="">' + esc(t('voice_na')) + '</option>';
+    var paceOpts = [[0.8, t('pace_slow')], [1, t('pace_normal')], [1.2, t('pace_fast')]]
+      .map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
+
+    host.innerHTML =
+      '<div class="player" role="region"><div class="player__progress"><div class="player__progress-bar" data-el="bar"></div></div>' +
+      '<div class="player__inner">' +
+        '<div class="player__meta"><span class="player__count" data-el="count"></span><span class="player__mode" data-el="mode"></span></div>' +
+        '<div class="player__transport">' +
+          '<button class="tbtn" data-act="prev" type="button" aria-label="' + esc(t('prev')) + '">' + icon('skip-back', 20) + '</button>' +
+          '<button class="tbtn tbtn--play" data-act="toggle" data-el="toggle" type="button"></button>' +
+          '<button class="tbtn" data-act="next" type="button" aria-label="' + esc(t('next')) + '">' + icon('skip-forward', 20) + '</button>' +
+        '</div>' +
+        '<div class="player__controls">' +
+          '<label class="field"><span>' + t('pace') + '</span><select data-el="pace" aria-label="' + esc(t('pace')) + '">' + paceOpts + '</select></label>' +
+          '<label class="field"><span>' + t('voice') + '</span><select data-el="voice" aria-label="' + esc(t('voice')) + '">' + voiceOpts + '</select></label>' +
+          '<button class="icon-btn" data-act="export" type="button" aria-label="' + esc(t('download')) + '" title="' + esc(t('download')) + '" disabled>' + icon('download', 18) + '</button>' +
+        '</div>' +
+      '</div></div>';
+
+    var el = {
+      count: host.querySelector('[data-el="count"]'),
+      mode: host.querySelector('[data-el="mode"]'),
+      toggle: host.querySelector('[data-el="toggle"]'),
+      bar: host.querySelector('[data-el="bar"]'),
+      pace: host.querySelector('[data-el="pace"]'),
+      voice: host.querySelector('[data-el="voice"]')
+    };
+
+    function paint() {
+      spanEls.forEach(function (s, i) {
+        s.classList.toggle('is-current', i === state.index);
+        s.classList.toggle('is-done', i < state.index);
+      });
+      if (state.playing && spanEls[state.index]) {
+        var r = spanEls[state.index].getBoundingClientRect();
+        if (r.top < 120 || r.bottom > window.innerHeight - 170) {
+          spanEls[state.index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      el.count.textContent = t('player_count', { i: state.index + 1, n: story.sentences.length });
+      el.mode.textContent = settings.engine === 'live' ? t('engine_live') : t('engine_preview');
+      el.mode.style.color = settings.engine === 'live' ? 'var(--accent)' : '';
+      el.toggle.innerHTML = icon(state.playing ? 'pause' : 'play', 24);
+      el.toggle.setAttribute('aria-label', state.playing ? t('pause') : t('play'));
+      var total = story.sentences.length;
+      var pct = total <= 1 ? (state.playing ? 100 : 0) : Math.round(((state.index + (state.playing ? 1 : 0)) / total) * 100);
+      el.bar.style.width = pct + '%';
+      el.pace.value = String(settings.pace);
+      if (list.length) el.voice.value = voiceId || list[0].id;
+    }
+
+    function playCurrent() {
+      var i = state.index;
+      if (i < 0 || i >= story.sentences.length) return finish();
+      paint();
+      narrate(story.sentences[i], { pace: settings.pace, speaker: voiceId, languageCode: story.lang })
+        .then(function () {
+          if (!state.playing) return;
+          if (i + 1 < story.sentences.length) { state.index = i + 1; playCurrent(); }
+          else finish();
+        })
+        .catch(function (err) {
+          if (err && err.name === 'AbortError') return;
+          if (settings.engine === 'live') {
+            settings.engine = 'preview'; save(); paintChrome(); paintSettings();
+            toast(t('toast_live'));
+            if (state.playing) playCurrent();
+            return;
+          }
+          state.playing = false; paint(); toast(t('toast_err'));
+        });
+    }
+    function play() { state.playing = true; paint(); playCurrent(); }
+    function pause() { state.playing = false; narrateStop(); paint(); }
+    function finish() { state.playing = false; state.index = story.sentences.length - 1; narrateStop(); paint(); toast(t('toast_done')); }
+    function jump(i) {
+      state.index = Math.max(0, Math.min(story.sentences.length - 1, i));
+      if (state.playing) playCurrent(); else paint();
+    }
+
+    el.toggle.addEventListener('click', function () { state.playing ? pause() : play(); });
+    host.querySelector('[data-act="prev"]').addEventListener('click', function () { jump(state.index - 1); });
+    host.querySelector('[data-act="next"]').addEventListener('click', function () { jump(state.index + 1); });
+    el.pace.addEventListener('change', function (e) { settings.pace = Number(e.target.value); save(); });
+    el.voice.addEventListener('change', function (e) {
+      voiceId = e.target.value;
+      settings.voice = settings.voice || {}; settings.voice[story.lang] = voiceId; save();
+    });
+
+    spanEls.forEach(function (s) {
+      var goTo = function () { state.index = Number(s.dataset.i); state.playing = true; playCurrent(); };
+      s.addEventListener('click', goTo);
+      s.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goTo(); } });
+    });
+
+    document.querySelector('[data-act="back"]').addEventListener('click', function () { go({ name: 'library', story: null }); });
+
+    paint();
+  }
+
+  /* ============================================================
+     Settings sheet
+     ============================================================ */
+  var backdrop = document.getElementById('backdrop');
+  var sheet = document.getElementById('sheet');
+
+  function openSheet() {
+    sheet.classList.add('is-open');
+    backdrop.classList.add('is-open');
+    paintSettings();
+    var first = sheet.querySelector('select, button');
+    if (first) first.focus();
+  }
+  function closeSheet() {
+    sheet.classList.remove('is-open');
+    backdrop.classList.remove('is-open');
+  }
+  backdrop.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(); });
+
+  function paintSettings() {
+    var uiOpts = [['hi', 'हिन्दी'], ['en', 'English']].map(function (o) {
+      return '<option value="' + o[0] + '"' + (settings.ui === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+    }).join('');
+
+    var langOpts = LANGS.map(function (l) {
+      var n = storiesFor(l.code).length;
+      var label = (settings.ui === 'en' ? l.en : l.hi) + ' \u2014 ' +
+        (n ? t('stories_count', { n: n }) : t('coming_soon'));
+      return '<option value="' + l.code + '"' + (settings.storyLang === l.code ? ' selected' : '') + '>' + esc(label) + '</option>';
+    }).join('');
+
+    var chips = LANGS.map(function (l) {
+      var n = storiesFor(l.code).length;
+      var cls = 'langchip' + (l.code === settings.storyLang ? ' is-active' : '') + (n ? '' : ' is-muted');
+      return '<span class="' + cls + '">' + esc(l.native) + '</span>';
+    }).join('');
+
+    var voices = voicesFor(settings.storyLang);
+    var voiceBlock = voices.length
+      ? '<div class="row"><label for="set-voice">' + t('voice') + '</label><select id="set-voice">' +
+          voices.map(function (v) {
+            return '<option value="' + v.id + '"' + (selectedVoice(settings.storyLang) === v.id ? ' selected' : '') + '>' +
+              esc(v.name) + ' \u2014 ' + esc(v.style) + '</option>';
+          }).join('') + '</select></div>'
+      : '<p class="row__hint">' + t('voice_na') + '</p>';
+
+    sheet.innerHTML =
+      '<div class="sheet__head">' +
+        '<div><h2 class="sheet__title">' + t('settings_title') + '</h2><p class="sheet__sub">' + t('settings_sub') + '</p></div>' +
+        '<button class="icon-btn" data-act="close" type="button" aria-label="' + esc(t('close')) + '">' + icon('x', 18) + '</button>' +
+      '</div>' +
+      '<div class="sheet__body">' +
+        '<section class="sec"><h3 class="sec__title">' + icon('book', 14) + ' ' + t('sec_language') + '</h3>' +
+          '<div class="row"><label for="set-ui">' + t('lbl_ui') + '</label><select id="set-ui">' + uiOpts + '</select></div>' +
+          '<div class="row"><label for="set-story">' + t('lbl_story') + '</label><select id="set-story">' + langOpts + '</select>' +
+            '<span class="row__hint">' + t('supported') + ' \u00B7 ' + t('ml_od_note') + '</span>' +
+            '<div class="langchips">' + chips + '</div>' +
+          '</div>' +
+        '</section>' +
+        '<section class="sec"><h3 class="sec__title">' + icon('volume', 14) + ' ' + t('sec_voice') + '</h3>' + voiceBlock +
+          '<div class="row"><span class="row__label">' + t('pace') + '</span><div class="seg" id="seg-pace">' +
+            [[0.8, t('pace_slow')], [1, t('pace_normal')], [1.2, t('pace_fast')]].map(function (p) {
+              return '<button type="button" data-pace="' + p[0] + '" class="' + (settings.pace === p[0] ? 'is-on' : '') + '">' + esc(p[1]) + '</button>';
+            }).join('') + '</div></div>' +
+        '</section>' +
+        '<section class="sec"><h3 class="sec__title">' + icon('sun', 14) + ' ' + t('sec_appearance') + '</h3>' +
+          '<div class="row"><span class="row__label">' + t('lbl_theme') + '</span><div class="seg" id="seg-theme">' +
+            '<button type="button" data-theme="night" class="' + (settings.theme === 'night' ? 'is-on' : '') + '">' + esc(t('theme_night')) + '</button>' +
+            '<button type="button" data-theme="day" class="' + (settings.theme === 'day' ? 'is-on' : '') + '">' + esc(t('theme_day')) + '</button>' +
+          '</div></div>' +
+        '</section>' +
+        '<section class="sec"><h3 class="sec__title">' + icon('sparkles', 14) + ' ' + t('sec_narration') + '</h3>' +
+          '<div class="row"><span class="row__label">' + t('lbl_engine') + '</span><div class="seg" id="seg-engine">' +
+            '<button type="button" data-engine="preview" class="' + (settings.engine === 'preview' ? 'is-on' : '') + '">' + esc(t('engine_preview')) + '</button>' +
+            '<button type="button" data-engine="live" class="' + (settings.engine === 'live' ? 'is-on' : '') + '">' + esc(t('engine_live')) + '</button>' +
+          '</div></div>' +
+          '<div class="row"><label for="set-endpoint">' + t('lbl_endpoint') + '</label>' +
+            '<input id="set-endpoint" type="text" value="' + esc(settings.endpoint) + '" />' +
+            '<span class="row__hint">' + t('endpoint_hint') + '</span>' +
+          '</div>' +
+        '</section>' +
+      '</div>';
+
+    sheet.querySelector('[data-act="close"]').addEventListener('click', closeSheet);
+    sheet.querySelector('#set-ui').addEventListener('change', function (e) {
+      settings.ui = e.target.value; save(); refreshAll();
+    });
+    sheet.querySelector('#set-story').addEventListener('change', function (e) {
+      settings.storyLang = e.target.value; save(); afterStoryLangChange();
+    });
+    var sv = sheet.querySelector('#set-voice');
+    if (sv) sv.addEventListener('change', function (e) {
+      settings.voice = settings.voice || {}; settings.voice[settings.storyLang] = e.target.value; save();
+    });
+    sheet.querySelectorAll('#seg-pace button').forEach(function (b) {
+      b.addEventListener('click', function () { settings.pace = Number(b.dataset.pace); save(); paintSettings(); });
+    });
+    sheet.querySelectorAll('#seg-theme button').forEach(function (b) {
+      b.addEventListener('click', function () { settings.theme = b.dataset.theme; save(); applyTheme(); paintChrome(); paintSettings(); });
+    });
+    sheet.querySelectorAll('#seg-engine button').forEach(function (b) {
+      b.addEventListener('click', function () { settings.engine = b.dataset.engine; save(); paintChrome(); paintSettings(); });
+    });
+    sheet.querySelector('#set-endpoint').addEventListener('change', function (e) {
+      settings.endpoint = e.target.value.trim() || '/api'; save();
+    });
+  }
+
+  function refreshAll() { applyTheme(); render(); if (sheet.classList.contains('is-open')) paintSettings(); }
+  function afterStoryLangChange() {
+    if (view.name === 'reader' && view.story && view.story.lang !== settings.storyLang) {
+      go({ name: 'library', story: null });
+    } else {
+      render();
+    }
+    paintSettings();
+  }
+
+  /* ============================================================
+     Boot
+     ============================================================ */
+  applyTheme();
+  shell();
+  render();
+
+  // Some browsers populate voices asynchronously; nothing to do but let the
+  // next pickVoice() call see them.
+  if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = function () {};
+  }
+})();
+</script>
+</body>
+</html>
