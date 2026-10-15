@@ -618,9 +618,12 @@ svg{display:block}
   var SERVED = (typeof location !== 'undefined') && /^https?:$/.test(location.protocol);
   var DEFAULTS = {
     ui: 'hi', storyLang: 'hi-IN', pace: 1, theme: 'night',
-    engine: SERVED ? 'live' : 'preview', endpoint: '/api', voice: {}
+    engine: SERVED ? 'live' : 'preview', endpoint: '/api', voice: {}, engineUserSet: false
   };
   var settings = load();
+  // Migration: ignore a saved engine value unless the user chose it themselves.
+  // An earlier auto-fallback to preview must not pin the app in preview forever.
+  if (!settings.engineUserSet) settings.engine = SERVED ? 'live' : 'preview';
   var view = { name: 'library', story: null };
   var search = '';
 
@@ -1151,7 +1154,7 @@ svg{display:block}
       b.addEventListener('click', function () { settings.theme = b.dataset.theme; save(); applyTheme(); paintChrome(); paintSettings(); });
     });
     sheet.querySelectorAll('#seg-engine button').forEach(function (b) {
-      b.addEventListener('click', function () { settings.engine = b.dataset.engine; save(); paintChrome(); paintSettings(); });
+      b.addEventListener('click', function () { settings.engine = b.dataset.engine; settings.engineUserSet = true; save(); paintChrome(); paintSettings(); });
     });
     sheet.querySelector('#set-endpoint').addEventListener('change', function (e) {
       settings.endpoint = e.target.value.trim() || '/api'; save();
